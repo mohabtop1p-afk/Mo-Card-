@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>MOHAB STORE — نظام إدارة الأرباح</title>
+<meta name="theme-color" content="#0b1020">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080c16;--panel:#101727;--panel2:#151d2f;--line:rgba(255,255,255,.08);
+  --text:#f6f8ff;--muted:#94a0b8;--primary:#7c5cff;--primary2:#4f8cff;
+  --green:#26d98b;--red:#ff5f72;--shadow:0 20px 60px rgba(0,0,0,.28);
+  --yellow:#ffc857;
+  --radius:22px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:radial-gradient(circle at 80% -10%,rgba(124,92,255,.18),transparent 32%),var(--bg);color:var(--text);font-family:Tajawal,system-ui,sans-serif}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.app{display:flex;min-height:100vh}
+.sidebar{width:260px;position:fixed;right:0;top:0;bottom:0;background:rgba(12,17,30,.92);backdrop-filter:blur(20px);border-left:1px solid var(--line);padding:22px 16px;z-index:30}
+.brand{display:flex;align-items:center;gap:12px;padding:8px 10px 24px}
+.logo{width:45px;height:45px;border-radius:15px;background:linear-gradient(135deg,var(--primary),var(--primary2));display:grid;place-items:center;font-weight:900;box-shadow:0 12px 30px rgba(99,92,255,.3)}
+.brand b{font-size:17px}.brand span{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+.nav{display:grid;gap:7px}.nav button{border:0;color:#aeb8cd;background:transparent;text-align:right;padding:13px 14px;border-radius:15px;display:flex;align-items:center;gap:12px;transition:.2s}
+.nav button:hover,.nav button.active{background:linear-gradient(90deg,rgba(124,92,255,.19),rgba(79,140,255,.08));color:#fff}
+.ico{width:21px;height:21px;display:inline-grid;place-items:center;font-size:18px;flex:none}
+.side-bottom{position:absolute;bottom:20px;right:16px;left:16px}.user-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:13px}.user-card small{color:var(--muted)}
+.main{margin-right:260px;width:calc(100% - 260px);padding:26px;max-width:1600px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:24px}
+.title h1{margin:0;font-size:28px}.title p{margin:5px 0 0;color:var(--muted)}
+.top-actions{display:flex;gap:9px}
+.btn{border:1px solid var(--line);background:var(--panel);color:#fff;padding:11px 15px;border-radius:14px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn.primary{border:0;background:linear-gradient(135deg,var(--primary),var(--primary2));box-shadow:0 12px 25px rgba(100,90,255,.22)}
+.btn.danger{color:#ff9ba7}.btn.green{color:#70efb8}
+.grid{display:grid;gap:16px}.stats{grid-template-columns:repeat(4,1fr)}
+.card{background:linear-gradient(180deg,rgba(20,28,45,.94),rgba(13,19,32,.94));border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.stat{padding:20px;position:relative;overflow:hidden}.stat:after{content:"";position:absolute;width:110px;height:110px;border-radius:50%;background:rgba(124,92,255,.1);left:-35px;top:-40px}
+.stat .s-top{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px}.stat .s-icon{width:42px;height:42px;border-radius:14px;background:rgba(124,92,255,.13);display:grid;place-items:center;font-size:20px}
+.stat h2{font-size:28px;margin:18px 0 6px}.green{color:var(--green)!important}.red{color:var(--red)!important}.yellow{color:var(--yellow)!important}
+.delta{font-size:12px;color:var(--muted)}
+.section{margin-top:18px}.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.section-head h3{margin:0;font-size:18px}.section-head span{color:var(--muted);font-size:12px}
+.two{grid-template-columns:1.45fr 1fr}
+.panel{padding:20px}.bars{height:230px;display:flex;align-items:flex-end;gap:10px;padding-top:20px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end}.bar{width:min(42px,70%);border-radius:9px 9px 4px 4px;background:linear-gradient(180deg,var(--primary2),var(--primary));min-height:8px}.bar-col small{font-size:10px;color:var(--muted)}
+.legend{display:flex;gap:14px;color:var(--muted);font-size:11px}.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-left:5px}
+.table-wrap{overflow:auto}.table{width:100%;border-collapse:collapse;min-width:650px}.table th,.table td{padding:13px 10px;border-bottom:1px solid var(--line);text-align:right;font-size:13px}.table th{color:var(--muted);font-weight:500}.badge{padding:5px 9px;border-radius:10px;font-size:11px;background:rgba(255,255,255,.06)}
+.page{display:none}.page.active{display:block}
+.form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.field{display:grid;gap:7px}.field label{font-size:12px;color:var(--muted)}.field input,.field select,.field textarea{width:100%;background:#0b1120;border:1px solid var(--line);outline:0;color:#fff;border-radius:13px;padding:12px}.field textarea{min-height:85px;resize:vertical}.full{grid-column:1/-1}
+.form-actions{display:flex;justify-content:flex-start;gap:8px;margin-top:15px}
+.profit-preview{margin-top:15px;padding:15px;border:1px dashed rgba(124,92,255,.35);border-radius:16px;background:rgba(124,92,255,.07);display:flex;justify-content:space-between;gap:10px;align-items:center}
+.debt-total{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}.mini{padding:12px 15px;background:var(--panel2);border:1px solid var(--line);border-radius:15px}.mini b{display:block;font-size:18px;margin-top:3px}.mini span{font-size:11px;color:var(--muted)}
+.search{max-width:280px}
+.toolbar{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:14px}
+.empty{padding:45px 15px;text-align:center;color:var(--muted)}
+.toast{position:fixed;left:22px;bottom:22px;background:#182238;border:1px solid var(--line);box-shadow:var(--shadow);padding:13px 16px;border-radius:14px;z-index:100;transform:translateY(130px);transition:.3s}.toast.show{transform:translateY(0)}
+.modal-back{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:80;padding:16px}.modal-back.open{display:flex}.modal{width:min(620px,100%);max-height:90vh;overflow:auto;background:#111a2b;border:1px solid var(--line);border-radius:24px;padding:20px}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.close{border:0;background:rgba(255,255,255,.06);color:#fff;width:38px;height:38px;border-radius:12px}
+.mobile-top{display:none}
+.login{position:fixed;inset:0;background:radial-gradient(circle at 50% 20%,rgba(124,92,255,.2),transparent 40%),var(--bg);display:none;place-items:center;padding:20px;z-index:200}.login.show{display:grid}.login-box{width:min(430px,100%);padding:32px;text-align:center}.login-logo{margin:auto;width:70px;height:70px;border-radius:23px;display:grid;place-items:center;background:linear-gradient(135deg,var(--primary),var(--primary2));font-size:26px;font-weight:900}.login h1{margin:18px 0 6px}.login p{color:var(--muted);line-height:1.8}.login .google{width:100%;margin-top:15px}.notice{font-size:11px;color:var(--muted);margin-top:14px}
+@media(max-width:1000px){.stats{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}.form-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){
+ .sidebar{display:none}.main{margin:0;width:100%;padding:16px;padding-bottom:88px}.mobile-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}.mobile-brand{display:flex;align-items:center;gap:9px}.mobile-brand .logo{width:39px;height:39px;border-radius:13px}.mobile-menu{display:flex;gap:7px}.mobile-menu button{border:1px solid var(--line);background:var(--panel);color:#fff;width:40px;height:40px;border-radius:13px}
+ .top{display:block}.top .top-actions{margin-top:13px}.top .top-actions .btn{flex:1}.title h1{font-size:24px}.stats{grid-template-columns:1fr 1fr;gap:10px}.stat{padding:15px}.stat h2{font-size:21px;margin:14px 0 5px}.stat .s-icon{width:36px;height:36px}.panel{padding:15px}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}.toolbar{align-items:stretch;flex-direction:column}.search{max-width:none}.bottom-nav{position:fixed;display:grid;grid-template-columns:repeat(5,1fr);bottom:0;right:0;left:0;height:70px;background:rgba(10,15,26,.94);backdrop-filter:blur(20px);border-top:1px solid var(--line);z-index:50}.bottom-nav button{border:0;background:none;color:var(--muted);font-size:10px;display:grid;place-items:center;gap:2px}.bottom-nav button.active{color:#fff}.bottom-nav .ico{font-size:18px}.table{min-width:680px}
+}
+@media(min-width:701px){.bottom-nav{display:none}}
+
+i[data-lucide]{width:19px;height:19px;stroke-width:2;vertical-align:middle}
+.nav i[data-lucide]{width:20px;height:20px}
+.btn i[data-lucide]{width:17px;height:17px}
+.mobile-menu i[data-lucide]{width:19px;height:19px}
+.bottom-nav i[data-lucide]{width:19px;height:19px}
+.s-icon i[data-lucide]{width:21px;height:21px}
+.close i[data-lucide]{width:18px;height:18px}
+
+/* ===== MOHAB STORE: الحسابات + PayBte ===== */
+.account-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.account-card{padding:18px;overflow:hidden}
+.account-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.account-icon{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;background:rgba(124,92,255,.12);font-size:23px}
+.account-meta b{display:block;font-size:16px}.account-meta small{color:var(--muted)}
+.account-email{direction:ltr;text-align:left;background:#0b1120;border:1px solid var(--line);border-radius:12px;padding:10px;margin:10px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.password-row{display:flex;gap:8px}.password-row input{flex:1}
+.account-actions{display:flex;gap:8px;margin-top:12px}.account-actions .btn{flex:1}
+.platform-pills{display:flex;gap:7px;flex-wrap:wrap}.platform-pill{padding:7px 10px;border-radius:10px;background:rgba(255,255,255,.06);font-size:11px;color:var(--muted)}
+.balance-box{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:18px;border-radius:18px;background:linear-gradient(135deg,rgba(124,92,255,.14),rgba(79,140,255,.08));border:1px solid rgba(124,92,255,.2);margin-bottom:15px}
+.balance-number{font-size:30px;font-weight:900;direction:ltr}
+.paybt-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:15px}
+.paybt-log td{white-space:nowrap}
+.paybt-positive{color:var(--green)!important}.paybt-negative{color:var(--red)!important}
+@media(max-width:1000px){.account-grid{grid-template-columns:repeat(2,1fr)}.paybt-summary{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.account-grid{grid-template-columns:1fr}.paybt-summary{grid-template-columns:1fr}.balance-box{display:block}.balance-box .btn{margin-top:12px;width:100%}}
+
+</style>
+<script src="https://unpkg.com/lucide@latest"></script>
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+<div id="login" class="login show">
+  <div class="login-box card">
+    <div class="login-logo">M</div>
+    <h1>MOHAB STORE</h1>
+    <p>نظام إدارة الأرباح والشحن والديون<br>النسخة الرسمية</p>
+    <button class="btn primary google" onclick="loginWithGoogle()"><i data-lucide="log-in"></i> تسجيل الدخول بحساب Google</button>
+    <div class="notice">الحساب المسموح به: mohabtop1p@gmail.com</div>
+  </div>
+</div>
+
+<aside class="sidebar">
+  <div class="brand"><div class="logo">M</div><div><b>MOHAB STORE</b><span>Profit Management</span></div></div>
+  <nav class="nav">
+    <button data-page="dashboard" class="active"><i data-lucide="layout-dashboard"></i><span>لوحة التحكم</span></button>
+    <button data-page="shipments"><i data-lucide="credit-card"></i><span>الشحنات والأرباح</span></button>
+    <button data-page="debts"><i data-lucide="users"></i><span>الديون والعملاء</span></button>
+     <button data-page="accounts"><i data-lucide="key-round"></i><span>حساباتي</span></button>
+    <button data-page="expenses"><i data-lucide="receipt"></i><span>المصروفات</span></button>
+    <button data-page="reports"><i data-lucide="chart-no-axes-combined"></i><span>التقارير</span></button>
+    <button data-page="settings"><i data-lucide="settings"></i><span>الإعدادات</span></button>
+  </nav>
+  <div class="side-bottom">
+    <div class="user-card"><small>الحساب الحالي</small><br><b>mohabtop1p@gmail.com</b></div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="mobile-top">
+    <div class="mobile-brand"><div class="logo">M</div><b>MOHAB STORE</b></div>
+    <div class="mobile-menu"><button onclick="go('settings')"><i data-lucide="settings"></i></button></div>
+  </div>
+
+  <div class="page active" id="dashboard">
+    <div class="top">
+      <div class="title"><h1>لوحة التحكم</h1><p>نظرة سريعة على أداء الستور اليوم</p></div>
+      <div class="top-actions">
+        <button class="btn" onclick="go('reports')"><i data-lucide="chart-no-axes-combined"></i> التقارير</button>
+        <button class="btn primary" onclick="openShipment()"><i data-lucide="plus"></i> إضافة شحنة</button>
+      </div>
+    </div>
+    <div class="grid stats">
+      <div class="card stat"><div class="s-top"><span>صافي الربح</span><div class="s-icon"><i data-lucide="wallet"></i></div></div><h2 id="statProfit" class="green">0 ج.م</h2><div class="delta">من جميع الشحنات المسجلة</div></div>
+      <div class="card stat"><div class="s-top"><span>إجمالي المبيعات</span><div class="s-icon"><i data-lucide="credit-card"></i></div></div><h2 id="statSales">0 ج.م</h2><div class="delta">المبلغ المحصل من العملاء</div></div>
+      <div class="card stat"><div class="s-top"><span>تكلفة الشحن</span><div class="s-icon"><i data-lucide="package"></i></div></div><h2 id="statCost">0 ج.م</h2><div class="delta">إجمالي ما دفعته أنت</div></div>
+      <div class="card stat"><div class="s-top"><span>ديون العملاء</span><div class="s-icon"><i data-lucide="users"></i></div></div><h2 id="statDebt" class="yellow">0 ج.م</h2><div class="delta">المبالغ المتبقية</div></div>
+    </div>
+    <div class="grid two section">
+      <div class="card panel">
+        <div class="section-head"><h3>الأداء خلال آخر 7 أيام</h3><span id="chartTotal">0 ج.م صافي</span></div>
+        <div class="legend"><span><i class="dot" style="background:#7c5cff"></i>صافي الربح</span></div>
+        <div class="bars" id="bars"></div>
+      </div>
+      <div class="card panel">
+        <div class="section-head"><h3>ملخص اليوم</h3><span id="todayDate"></span></div>
+        <div class="grid" style="gap:10px">
+          <div class="mini"><span>عدد الشحنات</span><b id="todayCount">0</b></div>
+          <div class="mini"><span>أرباح اليوم</span><b id="todayProfit" class="green">0 ج.م</b></div>
+          <div class="mini"><span>خسائر اليوم</span><b id="todayLoss" class="red">0 ج.م</b></div>
+          <div class="mini"><span>صافي اليوم</span><b id="todayNet">0 ج.م</b></div>
+        </div>
+      </div>
+    </div>
+    <div class="card panel section">
+      <div class="section-head"><h3>آخر العمليات</h3><button class="btn" onclick="go('shipments')">عرض الكل</button></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th>التاريخ</th><th>العميل</th><th>الخدمة</th><th>سعر العميل</th><th>التكلفة</th><th>النتيجة</th></tr></thead><tbody id="recentRows"></tbody></table></div>
+    </div>
+  </div>
+
+  <div class="page" id="shipments">
+    <div class="top"><div class="title"><h1>الشحنات والأرباح</h1><p>سجل كل عملية واحسب الربح أو الخسارة تلقائياً</p></div><button class="btn primary" onclick="openShipment()"><i data-lucide="plus"></i> إضافة شحنة</button></div>
+    <div class="card panel">
+      <div class="debt-total" style="margin-bottom:16px">
+        <div class="mini"><span>عدد العمليات</span><b id="shipCount">0</b></div>
+        <div class="mini"><span>إجمالي الربح</span><b id="shipGross" class="green">0 ج.م</b></div>
+        <div class="mini"><span>إجمالي الخسارة</span><b id="shipLoss" class="red">0 ج.م</b></div>
+      </div>
+      <div class="toolbar"><input class="field input search" id="shipSearch" placeholder="ابحث باسم العميل أو الخدمة..." oninput="renderShipments()"><select id="shipFilter" onchange="renderShipments()" style="background:#0b1120;color:#fff;border:1px solid var(--line);padding:11px;border-radius:13px"><option value="all">كل العمليات</option><option value="profit">أرباح</option><option value="loss">خسائر</option></select></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th>التاريخ</th><th>العميل</th><th>الخدمة</th><th>سعر البيع</th><th>التكلفة</th><th>باي بت</th><th>الربح/الخسارة</th><th>الحالة</th><th></th></tr></thead><tbody id="shipmentRows"></tbody></table></div>
+    </div>
+  </div>
+
+  <div class="page" id="debts">
+    <div class="top"><div class="title"><h1>الديون والعملاء</h1><p>تابع المبالغ المستحقة والمدفوعات الجزئية بسهولة</p></div><button class="btn primary" onclick="openDebt()"><i data-lucide="plus"></i> إضافة دين</button></div>
+    <div class="debt-total">
+      <div class="mini"><span>إجمالي الديون</span><b id="debtAll">0 ج.م</b></div>
+      <div class="mini"><span>تم تحصيله</span><b id="debtPaid" class="green">0 ج.م</b></div>
+      <div class="mini"><span>المتبقي</span><b id="debtRemain" class="yellow">0 ج.م</b></div>
+    </div>
+    <div class="card panel"><div class="toolbar"><input class="field input search" id="debtSearch" placeholder="ابحث عن عميل..." oninput="renderDebts()"></div><div class="table-wrap"><table class="table"><thead><tr><th>العميل</th><th>واتساب</th><th>إجمالي الدين</th><th>المدفوع</th><th>المتبقي</th><th>الحالة</th><th></th></tr></thead><tbody id="debtRows"></tbody></table></div></div>
+  </div>
+
+
+  <div class="page" id="accounts">
+    <div class="top">
+      <div class="title"><h1>حساباتي</h1><p>إدارة حسابات المنصات الخاصة بك بسهولة</p></div>
+      <button class="btn primary" onclick="openAccount()"><i data-lucide="plus"></i> إضافة حساب</button>
+    </div>
+    <div class="card panel" style="margin-bottom:16px">
+      <div class="section-head"><h3>المنصات المدعومة</h3><span>اختر المنصة عند إضافة الحساب</span></div>
+      <div class="platform-pills">
+        <span class="platform-pill">Google</span><span class="platform-pill">Facebook</span>
+        <span class="platform-pill">X / Twitter</span><span class="platform-pill">TikTok</span>
+        <span class="platform-pill">Instagram</span><span class="platform-pill">Discord</span>
+        <span class="platform-pill">Telegram</span><span class="platform-pill">YouTube</span>
+        <span class="platform-pill">أخرى</span>
+      </div>
+    </div>
+    <div class="account-grid" id="accountRows"></div>
+  </div>
+
+  <div class="page" id="expenses">
+    <div class="top"><div class="title"><h1>المصروفات</h1><p>سجل المصاريف حتى تعرف صافي ربح الستور الحقيقي</p></div><button class="btn primary" onclick="openExpense()"><i data-lucide="plus"></i> إضافة مصروف</button></div>
+    <div class="card panel"><div class="table-wrap"><table class="table"><thead><tr><th>التاريخ</th><th>النوع</th><th>الوصف</th><th>المبلغ</th><th></th></tr></thead><tbody id="expenseRows"></tbody></table></div></div>
+  </div>
+
+  <div class="page" id="reports">
+    <div class="top"><div class="title"><h1>التقارير والتحليلات</h1><p>أرقام واضحة تساعدك على معرفة أداء الستور</p></div></div>
+    <div class="grid stats">
+      <div class="card stat"><div class="s-top"><span>إجمالي الربح قبل المصروفات</span><div class="s-icon"><i data-lucide="trending-up"></i></div></div><h2 id="repGross" class="green">0 ج.م</h2></div>
+      <div class="card stat"><div class="s-top"><span>إجمالي الخسائر</span><div class="s-icon"><i data-lucide="trending-down"></i></div></div><h2 id="repLoss" class="red">0 ج.م</h2></div>
+      <div class="card stat"><div class="s-top"><span>المصروفات</span><div class="s-icon"><i data-lucide="receipt"></i></div></div><h2 id="repExpenses">0 ج.م</h2></div>
+      <div class="card stat"><div class="s-top"><span>صافي الربح النهائي</span><div class="s-icon"><i data-lucide="sparkles"></i></div></div><h2 id="repNet" class="green">0 ج.م</h2></div>
+    </div>
+    <div class="card panel section"><div class="section-head"><h3>ملاحظات مهمة</h3></div><div style="color:var(--muted);line-height:2">• الربح = سعر البيع للعميل − التكلفة عليك.<br>• إذا كانت النتيجة سالبة يتم تسجيلها كخسارة تلقائياً.<br>• الديون لا تعتبر مصروفاً؛ يتم فصلها عن حساب الربح مع متابعة التحصيل.<br>• جميع البيانات محفوظة بأمان على خوادم Google ويتم مزامنتها بشكل فوري.</div></div>
+  </div>
+
+  <div class="page" id="settings">
+    <div class="top"><div class="title"><h1>الإعدادات</h1><p>إعدادات النظام والحساب</p></div></div>
+    <div class="card panel">
+      <div class="form-grid">
+        <div class="field"><label>اسم الستور</label><input value="MOHAB STORE"></div>
+        <div class="field"><label>العملة</label><select><option>جنيه مصري — ج.م</option></select></div>
+        <div class="field"><label>حساب Google المسموح</label><input value="mohabtop1p@gmail.com" readonly></div>
+      </div>
+      <div class="profit-preview"><div><b>الحساب متصل بنجاح</b><br><small style="color:var(--muted)">البيانات محفوظة ويتم عمل نسخ احتياطية تلقائياً.</small></div><button class="btn danger" onclick="logout()">تسجيل الخروج</button></div>
+    </div>
+  </div>
+</main>
+
+<nav class="bottom-nav">
+  <button data-page="dashboard" class="active"><i data-lucide="layout-dashboard"></i><span>الرئيسية</span></button>
+  <button data-page="shipments"><i data-lucide="credit-card"></i><span>الشحن</span></button>
+  <button data-page="debts"><i data-lucide="users"></i><span>الديون</span></button>
+  <button data-page="reports"><i data-lucide="chart-no-axes-combined"></i><span>التقارير</span></button>
+  <button data-page="settings"><i data-lucide="settings"></i><span>الإعدادات</span></button>
+</nav>
+
+<div id="modalBack" class="modal-back"><div class="modal" id="modal"></div></div>
+<div id="toast" class="toast"></div>
+
+<script>
+// إعدادات Firebase الخاصة بك
+const firebaseConfig = {
+  apiKey: "AIzaSyB_6lo6T1dPNMAI-_d9gYfQ0ER8nPYtzxA",
+  authDomain: "buy-and-sell-at-mahab-store.firebaseapp.com",
+  projectId: "buy-and-sell-at-mahab-store",
+  storageBucket: "buy-and-sell-at-mahab-store.firebasestorage.app",
+  messagingSenderId: "150928118380",
+  appId: "1:150928118380:web:c96db14cb8c2160eac7e49",
+  measurementId: "G-N6T6G5XQKT"
+};
+
+// تهيئة Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const ALLOWED_EMAIL = "mohabtop1p@gmail.com";
+let docRef = db.collection('appData').doc('mainStore');
+
+// حالة البيانات الأساسية
+let data = { shipments: [], debts: [], expenses: [], accounts: [], paybt: { balance: 0, deposits: 0, logs: [] } };
+
+// دالة جلب البيانات من السيرفر
+async function loadData() {
+  try {
+    const doc = await docRef.get();
+    if (doc.exists) {
+      data = doc.data();
+      data.shipments = data.shipments || [];
+      data.debts = data.debts || [];
+      data.expenses = data.expenses || [];
+      data.accounts = data.accounts || [];
+      data.paybt = data.paybt || {balance:0,deposits:0,logs:[]};
+      data.paybt.balance = Number(data.paybt.balance || 0);
+      data.paybt.deposits = Number(data.paybt.deposits || 0);
+      data.paybt.logs = data.paybt.logs || [];
+      data.shipments = data.shipments.map(x => ({...x, paybt:Number(x.paybt || 0)}));
+    } else {
+      await docRef.set(data);
+    }
+    refresh();
+  } catch (error) {
+    console.error("خطأ في جلب البيانات:", error);
+    showToast('حدث خطأ أثناء تحميل البيانات');
+  }
+}
+
+// دالة تسجيل الدخول
+function loginWithGoogle() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: 'select_account' });
+  firebase.auth().signInWithPopup(provider).catch(error => {
+    console.error(error);
+    showToast('تم إلغاء أو فشل تسجيل الدخول');
+  });
+}
+
+// دالة تسجيل الخروج
+function logout() {
+  firebase.auth().signOut().then(() => {
+    location.reload();
+  });
+}
+
+// مراقبة حالة تسجيل الدخول والمصادقة
+firebase.auth().onAuthStateChanged(user => {
+  if (user) {
+    if (user.email === ALLOWED_EMAIL) {
+      document.getElementById('login').classList.remove('show');
+      showToast('مرحباً بك! جاري تحميل البيانات...');
+      loadData();
+    } else {
+      firebase.auth().signOut();
+      showToast('عذراً، هذا البريد غير مصرح له بالدخول');
+      document.getElementById('login').classList.add('show');
+    }
+  } else {
+    document.getElementById('login').classList.add('show');
+  }
+});
+
+// حفظ البيانات في Firebase بدلاً من التخزين المحلي
+function save(){
+  docRef.set(data).catch(error => {
+    console.error("خطأ في حفظ البيانات:", error);
+    showToast('تعذر الحفظ في قاعدة البيانات');
+  });
+  refresh();
+}
+
+// باقي دوال النظام كما هي لم تتأثر
+function money(n){return Number(n||0).toLocaleString('ar-EG')+' ج.م'}
+function today(){return new Date().toISOString().slice(0,10)}
+function go(page){
+ document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+ document.getElementById(page).classList.add('active');
+ document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===page));
+ window.scrollTo({top:0,behavior:'smooth'}); refresh();
+}
+document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>go(b.dataset.page));
+function showToast(t){const e=document.getElementById('toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),2500)}
+function openModal(content){document.getElementById('modal').innerHTML=content;document.getElementById('modalBack').classList.add('open')}
+function closeModal(){document.getElementById('modalBack').classList.remove('open')}
+document.getElementById('modalBack').onclick=e=>{if(e.target.id==='modalBack')closeModal()}
+
+function openShipment(){
+ openModal(`<div class="modal-head"><h2>إضافة شحنة جديدة</h2><button class="close" onclick="closeModal()"><i data-lucide="x"></i></button></div>
+ <form onsubmit="addShipment(event)">
+ <div class="form-grid">
+  <div class="field"><label>التاريخ</label><input name="date" type="date" value="${today()}" required></div>
+  <div class="field"><label>اسم العميل</label><input name="customer" placeholder="مثال: محمد" required></div>
+  <div class="field"><label>الخدمة / اللعبة</label><input name="service" placeholder="Free Fire / PUBG..." required></div>
+  <div class="field"><label>سعر الشحن للعميل</label><input name="sale" type="number" min="0" step="0.01" placeholder="150" required oninput="calcPreview()"></div>
+  <div class="field"><label>التكلفة عليك</label><input name="cost" type="number" min="0" step="0.01" placeholder="120" required oninput="calcPreview()"></div>
+  <div class="field full"><label>ملاحظات</label><textarea name="note" placeholder="أي تفاصيل عن العملية..."></textarea></div>
+ </div>
+ <div class="profit-preview"><span>النتيجة المتوقعة</span><b id="previewResult" class="green">0 ج.م</b></div>
+  <div class="mini" style="margin-top:10px"><span>رصيد باي بت بعد العملية</span><b id="previewPaybt">0.00 $</b></div>
+ <div class="form-actions"><button class="btn primary">حفظ العملية</button><button type="button" class="btn" onclick="closeModal()">إلغاء</button></div>
+ </form>`);
+ if(window.lucide) lucide.createIcons();
+}
+
+function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+const platformIcons={Google:'mail',Facebook:'facebook','X / Twitter':'twitter',TikTok:'music-2',Instagram:'instagram',Discord:'gamepad-2',Telegram:'send',YouTube:'youtube','أخرى':'key-round'};
+
+function openAccount(editId=null){
+ const a=editId?data.accounts.find(x=>x.id===editId):null;
+ const c=a||{platform:'Google',email:'',password:'',label:'',note:''};
+ openModal(`<div class="modal-head"><h2>${a?'تعديل الحساب':'إضافة حساب جديد'}</h2><button class="close" onclick="closeModal()"><i data-lucide="x"></i></button></div>
+ <form onsubmit="saveAccount(event,${a?a.id:'null'})"><div class="form-grid">
+ <div class="field"><label>نوع الحساب</label><select name="platform">${Object.keys(platformIcons).map(x=>`<option ${x===c.platform?'selected':''}>${x}</option>`).join('')}</select></div>
+ <div class="field"><label>البريد الإلكتروني / اسم المستخدم</label><input name="email" value="${esc(c.email)}" required></div>
+ <div class="field"><label>الباسورد</label><input name="password" type="password" value="${esc(c.password)}" required></div>
+ <div class="field"><label>الحساب ده بتاع إيه؟</label><input name="label" value="${esc(c.label)}" placeholder="مثال: حساب الشحن الرئيسي" required></div>
+ <div class="field full"><label>ملاحظات</label><textarea name="note">${esc(c.note)}</textarea></div>
+ </div><div class="notice">بيانات الحسابات تُحفظ ضمن بيانات النظام في Firebase.</div>
+ <div class="form-actions"><button class="btn primary">حفظ الحساب</button><button type="button" class="btn" onclick="closeModal()">إلغاء</button></div></form>`);
+ if(window.lucide)lucide.createIcons();
+}
+function saveAccount(e,id){
+ e.preventDefault();const f=new FormData(e.target);
+ const item={id:id||Date.now(),platform:f.get('platform'),email:f.get('email'),password:f.get('password'),label:f.get('label'),note:f.get('note')};
+ if(id){const i=data.accounts.findIndex(x=>x.id===id);if(i>-1)data.accounts[i]=item}else data.accounts.unshift(item);
+ save();closeModal();showToast(id?'تم تعديل الحساب':'تمت إضافة الحساب');
+}
+function toggleAccountPassword(id){const e=document.getElementById('pass-'+id);if(e)e.type=e.type==='password'?'text':'password'}
+function delAccount(id){if(confirm('هل تريد حذف الحساب؟')){data.accounts=data.accounts.filter(x=>x.id!==id);save();showToast('تم حذف الحساب')}}
+function renderAccounts(){
+ const el=document.getElementById('accountRows');if(!el)return;
+ el.innerHTML=data.accounts.length?data.accounts.map(a=>`<div class="card account-card">
+ <div class="account-head"><div class="account-icon"><i data-lucide="${platformIcons[a.platform]||'key-round'}"></i></div><div class="account-meta"><b>${esc(a.label)}</b><small>${esc(a.platform)}</small></div></div>
+ <div class="account-email">${esc(a.email)}</div>
+ <div class="password-row"><input id="pass-${a.id}" type="password" value="${esc(a.password)}" readonly><button class="btn" type="button" onclick="toggleAccountPassword(${a.id})"><i data-lucide="eye"></i></button></div>
+ ${a.note?`<div style="color:var(--muted);font-size:12px;margin-top:10px;line-height:1.7">${esc(a.note)}</div>`:''}
+ <div class="account-actions"><button class="btn" onclick="openAccount(${a.id})"><i data-lucide="pencil"></i> تعديل</button><button class="btn danger" onclick="delAccount(${a.id})"><i data-lucide="trash-2"></i> حذف</button></div>
+ </div>`).join(''):`<div class="card account-card" style="grid-column:1/-1"><div class="empty">لا توجد حسابات محفوظة<br><small>ابدأ بإضافة أول حساب.</small></div></div>`;
+ if(window.lucide)lucide.createIcons();
+}
+function openPaybtTopup(){
+ openModal(`<div class="modal-head"><h2>إضافة دولارات إلى باي بت</h2><button class="close" onclick="closeModal()"><i data-lucide="x"></i></button></div>
+ <form onsubmit="addPaybtBalance(event)"><div class="form-grid">
+ <div class="field"><label>المبلغ بالدولار</label><input name="amount" type="number" min="0.01" step="0.01" required placeholder="50"></div>
+ <div class="field"><label>البيان</label><input name="note" placeholder="مثال: تجديد رصيد باي بت"></div>
+ </div><div class="form-actions"><button class="btn primary">إضافة الرصيد</button></div></form>`);
+ if(window.lucide)lucide.createIcons();
+}
+function addPaybtBalance(e){
+ e.preventDefault();const f=new FormData(e.target),amount=Number(f.get('amount')||0);if(amount<=0)return;
+ data.paybt.balance=Number(data.paybt.balance||0)+amount;
+ data.paybt.deposits=Number(data.paybt.deposits||0)+amount;
+ data.paybt.logs.unshift({id:Date.now(),date:today(),type:'deposit',amount,note:f.get('note')||'إضافة دولارات',balance:data.paybt.balance});
+ save();closeModal();showToast(`تمت إضافة ${amount.toFixed(2)} $ إلى باي بت`);
+}
+function renderPaybt(){
+ const p=data.paybt||{balance:0,deposits:0,logs:[]};
+ const b=document.getElementById('paybtBalance');if(b)b.textContent=Number(p.balance||0).toFixed(2)+' $';
+ const d=document.getElementById('paybtDeposits');if(d)d.textContent=Number(p.deposits||0).toFixed(2)+' $';
+ const spent=(p.logs||[]).filter(x=>x.type==='shipment').reduce((a,x)=>a+Number(x.amount||0),0);
+ const sp=document.getElementById('paybtSpent');if(sp)sp.textContent=spent.toFixed(2)+' $';
+ const op=document.getElementById('paybtOps');if(op)op.textContent=(p.logs||[]).filter(x=>x.type==='shipment').length;
+ const rows=document.getElementById('paybtRows');if(!rows)return;
+ rows.innerHTML=(p.logs||[]).length?(p.logs||[]).slice(0,100).map(x=>`<tr><td>${esc(x.date)}</td><td>${x.type==='shipment'?'خصم شحنة':'إضافة دولارات'}</td><td>${esc(x.customer||x.note||'—')}</td><td class="${x.type==='shipment'?'paybt-negative':'paybt-positive'}">${x.type==='shipment'?'−':'+'}${Number(x.amount||0).toFixed(2)} $</td><td>${Number(x.balance||0).toFixed(2)} $</td></tr>`).join(''):`<tr><td colspan="5" class="empty">لا يوجد سجل باي بت</td></tr>`;
+}
+
+function calcPreview(){const f=document.querySelector('#modal form');if(!f)return;const n=Number(f.sale.value||0)-Number(f.cost.value||0);const e=document.getElementById('previewResult');e.textContent=money(Math.abs(n))+(n>=0?' — ربح':' — خسارة');e.className=n>=0?'green':'red';const p=document.getElementById('previewPaybt');if(p)p.textContent=Math.max(0,Number(data.paybt?.balance||0)-Number(f.paybt?.value||0)).toFixed(2)+' $'}
+function addShipment(e){e.preventDefault();const f=new FormData(e.target);const paybt=Number(f.get('paybt')||0);if(paybt>Number(data.paybt?.balance||0)){showToast('رصيد باي بت غير كافٍ لهذه الشحنة');return;}const id=Date.now();data.shipments.unshift({id,date:f.get('date'),customer:f.get('customer'),service:f.get('service'),sale:+f.get('sale'),cost:+f.get('cost'),paybt,note:f.get('note')});if(paybt>0){data.paybt.balance=Number(data.paybt.balance||0)-paybt;data.paybt.logs.unshift({id:Date.now()+1,date:f.get('date'),type:'shipment',amount:paybt,customer:f.get('customer'),shipmentId:id,balance:data.paybt.balance});}save();closeModal();showToast('تمت إضافة الشحنة وخصم باي بت بنجاح')}
+function delShipment(id){if(confirm('هل تريد حذف العملية؟')){const sh=data.shipments.find(x=>x.id===id);if(sh&&Number(sh.paybt||0)>0){data.paybt.balance=Number(data.paybt.balance||0)+Number(sh.paybt);data.paybt.logs.unshift({id:Date.now(),date:today(),type:'deposit',amount:Number(sh.paybt),note:'إرجاع خصم بعد حذف الشحنة',balance:data.paybt.balance});}data.shipments=data.shipments.filter(x=>x.id!==id);data.paybt.logs=(data.paybt.logs||[]).filter(x=>x.shipmentId!==id);save();showToast('تم حذف العملية وإرجاع دولارات باي بت')}}
+function renderShipments(){
+ const q=(document.getElementById('shipSearch')?.value||'').toLowerCase(), filter=document.getElementById('shipFilter')?.value||'all';
+ let arr=data.shipments.filter(x=>(x.customer+' '+x.service).toLowerCase().includes(q));
+ const gross=data.shipments.reduce((s,x)=>s+Math.max(0,x.sale-x.cost),0), loss=data.shipments.reduce((s,x)=>s+Math.max(0,x.cost-x.sale),0);
+ document.getElementById('shipCount').textContent=data.shipments.length;
+ document.getElementById('shipGross').textContent=money(gross);
+ document.getElementById('shipLoss').textContent=money(loss);
+ if(filter==='profit')arr=arr.filter(x=>x.sale-x.cost>=0);if(filter==='loss')arr=arr.filter(x=>x.sale-x.cost<0);
+ document.getElementById('shipmentRows').innerHTML=arr.length?arr.map(x=>{let n=x.sale-x.cost;return `<tr><td>${x.date}</td><td>${x.customer}</td><td>${x.service}</td><td>${money(x.sale)}</td><td>${money(x.cost)}</td><td class="paybt-negative">${Number(x.paybt||0).toFixed(2)} $</td><td class="${n>=0?'green':'red'}">${n>=0?'+':'−'}${money(Math.abs(n))}</td><td><span class="badge">${n>=0?'ربح':'خسارة'}</span></td><td><button class="btn danger" onclick="delShipment(${x.id})"><i data-lucide="trash-2"></i> حذف</button></td></tr>`}).join(''):`<tr><td colspan="9" class="empty">لا توجد عمليات مطابقة</td></tr>`;
+}
+function openDebt(){
+ openModal(`<div class="modal-head"><h2>إضافة عميل عليه دين</h2><button class="close" onclick="closeModal()"><i data-lucide="x"></i></button></div>
+ <form onsubmit="addDebt(event)"><div class="form-grid">
+ <div class="field"><label>اسم العميل</label><input name="name" required></div>
+ <div class="field"><label>رقم واتساب</label><input name="phone" placeholder="2010xxxxxxxx" required></div>
+ <div class="field"><label>إجمالي المبلغ</label><input name="total" type="number" min="0" required></div>
+ <div class="field full"><label>ملاحظة</label><textarea name="note" placeholder="تفاصيل الدين..."></textarea></div>
+ </div><div class="form-actions"><button class="btn primary">حفظ الدين</button></div></form>`);
+ if(window.lucide) lucide.createIcons();
+}
+function addDebt(e){e.preventDefault();const f=new FormData(e.target);data.debts.unshift({id:Date.now(),name:f.get('name'),phone:f.get('phone').replace(/\D/g,''),total:+f.get('total'),paid:0,note:f.get('note')});save();closeModal();showToast('تمت إضافة الدين')}
+function wa(phone){return 'https://wa.me/'+phone.replace(/\D/g,'')}
+function addPayment(id){
+ const d=data.debts.find(x=>x.id===id); if(!d)return;
+ openModal(`<div class="modal-head"><h2>تسجيل دفعة — ${d.name}</h2><button class="close" onclick="closeModal()"><i data-lucide="x"></i></button></div>
+ <div class="mini" style="margin-bottom:14px"><span>المتبقي</span><b class="yellow">${money(d.total-d.paid)}</b></div>
+ <form onsubmit="payDebt(event,${id})"><div class="field"><label>قيمة الدفعة</label><input name="amount" type="number" min="0.01" max="${d.total-d.paid}" step=".01" required></div><div class="form-actions"><button class="btn primary">تسجيل الدفعة</button></div></form>`);
+ if(window.lucide) lucide.createIcons();
+}
+function payDebt(e,id){e.preventDefault();const amount=+new FormData(e.target).get('amount');const d=data.debts.find(x=>x.id===id);d.paid=Math.min(d.total,d.paid+amount);save();closeModal();showToast(d.paid>=d.total?'تم سداد الدين بالكامل':'تم تسجيل الدفعة')}
+function delDebt(id){if(confirm('حذف سجل الدين؟')){data.debts=data.debts.filter(x=>x.id!==id);save()}}
+function renderDebts(){
+ const q=(document.getElementById('debtSearch')?.value||'').toLowerCase();const arr=data.debts.filter(x=>x.name.toLowerCase().includes(q));
+ let all=0,paid=0;data.debts.forEach(x=>{all+=x.total;paid+=x.paid});document.getElementById('debtAll').textContent=money(all);document.getElementById('debtPaid').textContent=money(paid);document.getElementById('debtRemain').textContent=money(all-paid);
+ document.getElementById('debtRows').innerHTML=arr.length?arr.map(x=>{let rem=x.total-x.paid;return `<tr><td><b>${x.name}</b></td><td><a href="${wa(x.phone)}" target="_blank" style="text-decoration:none;font-size:22px"><i data-lucide="message-circle"></i></a></td><td>${money(x.total)}</td><td class="green">${money(x.paid)}</td><td class="yellow">${money(rem)}</td><td><span class="badge">${rem<=0?'تم السداد':'متبقي'}</span></td><td>${rem>0?`<button class="btn green" onclick="addPayment(${x.id})"><i data-lucide="plus"></i> دفعة</button>`:''} <button class="btn danger" onclick="delDebt(${x.id})"><i data-lucide="trash-2"></i> حذف</button></td></tr>`}).join(''):`<tr><td colspan="7" class="empty">لا توجد ديون</td></tr>`;
+}
+function openExpense(){
+ openModal(`<div class="modal-head"><h2>إضافة مصروف</h2><button class="close" onclick="closeModal()"><i data-lucide="x"></i></button></div><form onsubmit="addExpense(event)"><div class="form-grid">
+ <div class="field"><label>التاريخ</label><input name="date" type="date" value="${today()}" required></div><div class="field"><label>نوع المصروف</label><select name="type"><option>تشغيل</option><option>إعلانات</option><option>إنترنت</option><option>أخرى</option></select></div><div class="field"><label>المبلغ</label><input name="amount" type="number" min="0" required></div><div class="field full"><label>الوصف</label><input name="desc" placeholder="مثال: إعلان أو مصروف تشغيل"></div>
+ </div><div class="form-actions"><button class="btn primary">حفظ المصروف</button></div></form>`);
+ if(window.lucide) lucide.createIcons();
+}
+function addExpense(e){e.preventDefault();const f=new FormData(e.target);data.expenses.unshift({id:Date.now(),date:f.get('date'),type:f.get('type'),desc:f.get('desc'),amount:+f.get('amount')});save();closeModal();showToast('تمت إضافة المصروف')}
+function delExpense(id){data.expenses=data.expenses.filter(x=>x.id!==id);save()}
+function renderExpenses(){document.getElementById('expenseRows').innerHTML=data.expenses.length?data.expenses.map(x=>`<tr><td>${x.date}</td><td>${x.type}</td><td>${x.desc||'—'}</td><td>${money(x.amount)}</td><td><button class="btn danger" onclick="delExpense(${x.id})"><i data-lucide="trash-2"></i> حذف</button></td></tr>`).join(''):`<tr><td colspan="5" class="empty">لا توجد مصروفات</td></tr>`}
+function refresh(){
+ const gross=data.shipments.reduce((s,x)=>s+x.sale-x.cost,0),sales=data.shipments.reduce((s,x)=>s+x.sale,0),cost=data.shipments.reduce((s,x)=>s+x.cost,0),loss=data.shipments.reduce((s,x)=>s+Math.max(0,x.cost-x.sale),0),expenses=data.expenses.reduce((s,x)=>s+x.amount,0);
+ const debts=data.debts.reduce((s,x)=>s+x.total-x.paid,0);
+ document.getElementById('statProfit').textContent=money(gross-expenses);document.getElementById('statSales').textContent=money(sales);document.getElementById('statCost').textContent=money(cost);document.getElementById('statDebt').textContent=money(debts);
+ const ts=data.shipments.filter(x=>x.date===today()), tp=ts.reduce((s,x)=>s+Math.max(0,x.sale-x.cost),0), tl=ts.reduce((s,x)=>s+Math.max(0,x.cost-x.sale),0);
+ document.getElementById('todayCount').textContent=ts.length;document.getElementById('todayProfit').textContent=money(tp);document.getElementById('todayLoss').textContent=money(tl);document.getElementById('todayNet').textContent=money(tp-tl);
+ document.getElementById('todayDate').textContent=new Date().toLocaleDateString('ar-EG',{day:'numeric',month:'short'});
+ document.getElementById('chartTotal').textContent=money(gross)+' صافي';
+ document.getElementById('repGross').textContent=money(gross);document.getElementById('repLoss').textContent=money(loss);document.getElementById('repExpenses').textContent=money(expenses);document.getElementById('repNet').textContent=money(gross-expenses);
+ const days=[...Array(7)].map((_,i)=>{let d=new Date();d.setDate(d.getDate()-(6-i));return d.toISOString().slice(0,10)});const vals=days.map(day=>data.shipments.filter(x=>x.date===day).reduce((s,x)=>s+x.sale-x.cost,0));const max=Math.max(1,...vals.map(Math.abs));
+ document.getElementById('bars').innerHTML=vals.map((v,i)=>`<div class="bar-col"><b style="font-size:10px">${v?money(Math.abs(v)).replace(' ج.م',''):''}</b><div class="bar" title="${money(v)}" style="height:${Math.max(5,Math.abs(v)/max*72)}%"></div><small>${new Date(days[i]).toLocaleDateString('ar-EG',{weekday:'short'})}</small></div>`).join('');
+ document.getElementById('recentRows').innerHTML=data.shipments.slice(0,6).map(x=>{let n=x.sale-x.cost;return `<tr><td>${x.date}</td><td>${x.customer}</td><td>${x.service}</td><td>${money(x.sale)}</td><td>${money(x.cost)}</td><td class="${n>=0?'green':'red'}">${n>=0?'+':'−'}${money(Math.abs(n))}</td></tr>`}).join('')||`<tr><td colspan="6" class="empty">لا توجد عمليات</td></tr>`;
+ renderShipments();renderDebts();renderExpenses();renderAccounts();renderPaybt();
+ if(window.lucide) lucide.createIcons();
+}
+
+if(window.lucide) lucide.createIcons();
+</script>
+</body>
+</html>
